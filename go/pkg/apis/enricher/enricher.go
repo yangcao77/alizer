@@ -128,6 +128,8 @@ func GetPortsFromDockerFile(root string) []int {
 		if err == nil {
 			defer file.Close()
 			return getPortsFromReader(file)
+		} else {
+			fmt.Printf("*********error in GetPortsFromDockerFile: %v", err)
 		}
 	}
 	return []int{}
@@ -161,6 +163,7 @@ func getPortsFromReader(file io.Reader) []int {
 	var ports []int
 	res, err := parser.Parse(file)
 	if err != nil {
+		fmt.Printf("*********error in getPortsFromReader: %v", err)
 		return ports
 	}
 
