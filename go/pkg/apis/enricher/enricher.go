@@ -128,7 +128,7 @@ func GetPortsFromDockerFile(root string) ([]int, error) {
 		if err == nil {
 			defer file.Close()
 			return getPortsFromReader(file), nil
-		} else {
+		} else if !os.IsNotExist(err) {
 			fmt.Printf("*********error in GetPortsFromDockerFile: %v", err)
 			return []int{}, err
 		}
