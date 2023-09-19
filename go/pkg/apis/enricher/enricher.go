@@ -160,7 +160,7 @@ func getLocations(root string) []string {
 }
 
 // getPortsFromReader returns a slice of port numbers.
-func getPortsFromReader(file io.Reader) ([]int, err) {
+func getPortsFromReader(file io.Reader) ([]int, error) {
 	var ports []int
 	res, err := parser.Parse(file)
 	if err != nil {
