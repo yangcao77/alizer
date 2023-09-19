@@ -127,7 +127,7 @@ func GetPortsFromDockerFile(root string) ([]int, error) {
 		file, err := os.Open(filepath.Join(root, location))
 		if err == nil {
 			defer file.Close()
-			return getPortsFromReader(file), nil
+			return getPortsFromReader(file)
 		} else if !os.IsNotExist(err) {
 			fmt.Printf("*********error in GetPortsFromDockerFile: %v", err)
 			return []int{}, err
@@ -160,12 +160,12 @@ func getLocations(root string) []string {
 }
 
 // getPortsFromReader returns a slice of port numbers.
-func getPortsFromReader(file io.Reader) []int {
+func getPortsFromReader(file io.Reader) ([]int, err) {
 	var ports []int
 	res, err := parser.Parse(file)
 	if err != nil {
 		fmt.Printf("*********error in getPortsFromReader: %v", err)
-		return ports
+		return ports, err
 	}
 
 	for _, child := range res.AST.Children {
@@ -179,7 +179,7 @@ func getPortsFromReader(file io.Reader) []int {
 			}
 		}
 	}
-	return ports
+	return ports, nil
 }
 
 // GetPortsFromDockerComposeFile returns a slice of port numbers from a compose file.

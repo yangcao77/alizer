@@ -255,7 +255,10 @@ func detectComponentByAnalyzingConfigFile(file string, language string, settings
 			lang,
 		},
 	}
-	enrichComponent(&component, settings, ctx)
+	err := enrichComponent(&component, settings, ctx)
+	if err != nil {
+		return component, err
+	}
 	return component, nil
 }
 
