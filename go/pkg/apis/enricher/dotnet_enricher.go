@@ -40,16 +40,20 @@ func (d DotNetEnricher) DoEnrichLanguage(language *model.Language, files *[]stri
 }
 
 // DoEnrichComponent checks for the port number using a Dockerfile or Compose file
-func (d DotNetEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) {
+func (d DotNetEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) error {
 	projectName := GetDefaultProjectName(component.Path)
 	component.Name = projectName
 
 	for _, algorithm := range settings.PortDetectionStrategy {
 		ports := []int{}
+		var err error
 		switch algorithm {
 		case model.DockerFile:
 			{
-				ports = GetPortsFromDockerFile(component.Path)
+				ports, err = GetPortsFromDockerFile(component.Path)
+				if err != nil {
+					return err
+				}
 				break
 			}
 		case model.Compose:
@@ -62,7 +66,7 @@ func (d DotNetEnricher) DoEnrichComponent(component *model.Component, settings m
 			component.Ports = ports
 		}
 		if len(component.Ports) > 0 {
-			return
+			return nil
 		}
 	}
 }

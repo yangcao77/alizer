@@ -60,7 +60,7 @@ func (j JavaEnricher) DoEnrichLanguage(language *model.Language, files *[]string
 }
 
 // DoEnrichComponent checks for the port number using a Dockerfile, Compose file, or Source strategy
-func (j JavaEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) {
+func (j JavaEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) error {
 	projectName := getProjectNameMaven(component.Path)
 	if projectName == "" {
 		projectName = getProjectNameGradle(component.Path)
@@ -72,10 +72,14 @@ func (j JavaEnricher) DoEnrichComponent(component *model.Component, settings mod
 
 	for _, algorithm := range settings.PortDetectionStrategy {
 		var ports []int
+		var err error
 		switch algorithm {
 		case model.DockerFile:
 			{
-				ports = GetPortsFromDockerFile(component.Path)
+				ports, err = GetPortsFromDockerFile(component.Path)
+				if err != nil {
+					return err
+				}
 				break
 			}
 		case model.Compose:
@@ -98,7 +102,7 @@ func (j JavaEnricher) DoEnrichComponent(component *model.Component, settings mod
 			component.Ports = ports
 		}
 		if len(component.Ports) > 0 {
-			return
+			return nil
 		}
 	}
 }

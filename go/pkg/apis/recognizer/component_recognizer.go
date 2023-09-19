@@ -227,7 +227,10 @@ func detectComponentByFolderAnalysis(root string, configLanguages []string, sett
 				Path:      root,
 				Languages: languages,
 			}
-			enrichComponent(&component, settings, ctx)
+			err := enrichComponent(&component, settings, ctx)
+			if err != nil {
+				return component, err
+			}
 			return component, nil
 		}
 	}
@@ -277,11 +280,15 @@ func detectComponentUsingConfigFile(file string, languages []string, settings mo
 	return model.Component{}, errors.New("no component detected")
 }
 
-func enrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) {
+func enrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) error {
 	componentEnricher := enricher.GetEnricherByLanguage(component.Languages[0].Name)
 	if componentEnricher != nil {
-		componentEnricher.DoEnrichComponent(component, settings, ctx)
+		err := componentEnricher.DoEnrichComponent(component, settings, ctx)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 // getLanguagesWeightedByConfigFile returns the list of languages reordered by importance per config file.

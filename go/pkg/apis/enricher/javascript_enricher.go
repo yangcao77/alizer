@@ -63,7 +63,7 @@ func (j JavaScriptEnricher) DoEnrichLanguage(language *model.Language, files *[]
 }
 
 // DoEnrichComponent checks for the port number using a Dockerfile, Compose file, or Source strategy
-func (j JavaScriptEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) {
+func (j JavaScriptEnricher) DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) error {
 	projectName := ""
 	packageJsonPath := filepath.Join(component.Path, "package.json")
 	if _, err := os.Stat(packageJsonPath); err == nil {
@@ -79,10 +79,14 @@ func (j JavaScriptEnricher) DoEnrichComponent(component *model.Component, settin
 
 	for _, algorithm := range settings.PortDetectionStrategy {
 		var ports []int
+		var err error
 		switch algorithm {
 		case model.DockerFile:
 			{
-				ports = GetPortsFromDockerFile(component.Path)
+				ports, err = GetPortsFromDockerFile(component.Path)
+				if err != nil {
+					return err
+				}
 				break
 			}
 		case model.Compose:
@@ -105,7 +109,7 @@ func (j JavaScriptEnricher) DoEnrichComponent(component *model.Component, settin
 			component.Ports = ports
 		}
 		if len(component.Ports) > 0 {
-			return
+			return nil
 		}
 	}
 }

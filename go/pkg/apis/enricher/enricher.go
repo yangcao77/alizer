@@ -37,7 +37,7 @@ import (
 type Enricher interface {
 	GetSupportedLanguages() []string
 	DoEnrichLanguage(language *model.Language, files *[]string)
-	DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context)
+	DoEnrichComponent(component *model.Component, settings model.DetectionSettings, ctx *context.Context) error
 	IsConfigValidForComponentDetection(language string, configFile string) bool
 }
 
@@ -121,18 +121,19 @@ func GetDefaultProjectName(path string) string {
 }
 
 // GetPortsFromDockerFile returns a slice of port numbers from Dockerfiles in the given directory.
-func GetPortsFromDockerFile(root string) []int {
+func GetPortsFromDockerFile(root string) ([]int, error) {
 	locations := getLocations(root)
 	for _, location := range locations {
 		file, err := os.Open(filepath.Join(root, location))
 		if err == nil {
 			defer file.Close()
-			return getPortsFromReader(file)
+			return getPortsFromReader(file), nil
 		} else {
 			fmt.Printf("*********error in GetPortsFromDockerFile: %v", err)
+			return []int{}, err
 		}
 	}
-	return []int{}
+	return []int{}, fmt.Errorf("No port detected")
 }
 
 func getLocations(root string) []string {
