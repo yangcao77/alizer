@@ -105,6 +105,7 @@ func (g GoEnricher) DoEnrichComponent(component *model.Component, settings model
 			return nil
 		}
 	}
+	return nil
 }
 
 func (g GoEnricher) IsConfigValidForComponentDetection(language string, config string) bool {

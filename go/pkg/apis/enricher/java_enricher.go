@@ -105,6 +105,7 @@ func (j JavaEnricher) DoEnrichComponent(component *model.Component, settings mod
 			return nil
 		}
 	}
+	return nil
 }
 
 func getProjectNameGradle(root string) string {

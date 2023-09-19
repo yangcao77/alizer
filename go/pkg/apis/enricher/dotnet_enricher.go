@@ -69,6 +69,7 @@ func (d DotNetEnricher) DoEnrichComponent(component *model.Component, settings m
 			return nil
 		}
 	}
+	return nil
 }
 
 func (d DotNetEnricher) IsConfigValidForComponentDetection(language string, config string) bool {

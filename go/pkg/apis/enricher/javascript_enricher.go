@@ -112,6 +112,7 @@ func (j JavaScriptEnricher) DoEnrichComponent(component *model.Component, settin
 			return nil
 		}
 	}
+	return nil
 }
 
 func (j JavaScriptEnricher) IsConfigValidForComponentDetection(language string, config string) bool {

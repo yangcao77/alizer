@@ -79,6 +79,7 @@ func (p PythonEnricher) DoEnrichComponent(component *model.Component, settings m
 			return nil
 		}
 	}
+	return nil
 }
 
 func (p PythonEnricher) IsConfigValidForComponentDetection(language string, config string) bool {
